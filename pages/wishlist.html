@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Wishlist — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="dark-toggle">☾</button>
+      <a href="wishlist.html">♡</a>
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+    </div>
+  </div>
+</header>
+<div class="page-banner"><div class="container"><h1>Wishlist</h1></div></div>
+<div class="container section">
+  <div class="products-grid" id="wishlist-grid"></div>
+</div>
+<footer class="site-footer">
+  <div class="container"><div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)"><p>© 2025 LUXE</p></div></div>
+</footer>
+<div id="toast-container"></div>
+<script src="../js/store.js"></script>
+<script>
+function showToast(msg,type=''){const tc=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;tc.appendChild(t);setTimeout(()=>t.remove(),3500);}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  LUXE._updateCartBadge();
+  const wl=LUXE.getWishlist();
+  const grid=document.getElementById('wishlist-grid');
+  if(!wl.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">♡</div><h3>Your wishlist is empty</h3><a href="products.html" class="btn btn-primary mt-16">Explore Products</a></div>';return;}
+  const products=wl.map(id=>LUXE.getById(id)).filter(Boolean);
+  grid.innerHTML=products.map(p=>{
+    const s=p.sale_price&&p.sale_price<p.price;
+    return `<div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+      <div class="product-card-image"><img src="${p.images?.[0]||''}" alt="${p.name}" loading="lazy">${s?'<span class="badge-sale">Sale</span>':''}
+        <button class="wish-btn active" data-id="${p.id}" onclick="event.stopPropagation()">♥</button>
+        <div class="quick-add" data-id="${p.id}">Add to Cart</div>
+      </div>
+      <div class="product-card-body"><div class="category">${p.category}</div><h4>${p.name}</h4>
+        <div class="price-row">${s?`<span class="price price-sale">${LUXE.formatPrice(p.sale_price)}</span><span class="price price-original">${LUXE.formatPrice(p.price)}</span>`:`<span class="price">${LUXE.formatPrice(p.price)}</span>`}</div>
+      </div></div>`;
+  }).join('');
+  grid.querySelectorAll('.quick-add').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const prod=LUXE.getById(btn.dataset.id);LUXE.addToCart(btn.dataset.id,prod.sizes?.[0]||'One Size',prod.colors?.[0]||'Default');showToast(prod.name+' added to cart!','success');}));
+  grid.querySelectorAll('.wish-btn').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();LUXE.toggleWishlist(btn.dataset.id);location.reload();}));
+});
+</script>
+</body></html>

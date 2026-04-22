@@ -1,0 +1,58 @@
+[
+  {
+    "id": "p001",
+    "name": "Silk Draped Midi Dress",
+    "price": 285,
+    "sale_price": 199,
+    "sku": "WD-001",
+    "category": "Women",
+    "sizes": ["XS","S","M","L","XL"],
+    "colors": ["Ivory","Black","Blush"],
+    "description": "Effortlessly elegant, this silk-blend midi dress features a fluid drape and adjustable tie waist. Perfect for both daytime sophistication and evening allure.",
+    "images": ["https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80"],
+    "featured": true,
+    "stock": 24
+  },
+  {
+    "id": "p002",
+    "name": "Tailored Wool Blazer",
+    "price": 395,
+    "sale_price": null,
+    "sku": "MB-002",
+    "category": "Men",
+    "sizes": ["S","M","L","XL","XXL"],
+    "colors": ["Charcoal","Navy","Camel"],
+    "description": "A masterclass in modern tailoring. This single-breasted blazer is crafted from Italian wool, with a slim silhouette designed to elevate any wardrobe.",
+    "images": ["https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=600&q=80"],
+    "featured": true,
+    "stock": 18
+  },
+  {
+    "id": "p003",
+    "name": "Structured Leather Tote",
+    "price": 320,
+    "sale_price": 240,
+    "sku": "AC-003",
+    "category": "Accessories",
+    "sizes": ["One Size"],
+    "colors": ["Black","Tan","Burgundy"],
+    "description": "Handcrafted from full-grain leather, this structured tote seamlessly combines form and function. Spacious interior with polished gold hardware.",
+    "images": ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80"],
+    "featured": true,
+    "stock": 12
+  },
+  {
+    "id": "p004",
+    "name": "Cashmere Ribbed Sweater",
+    "price": 245,
+    "sale_price": null,
+    "sku": "WK-004",
+    "category": "Women",
+    "sizes": ["XS","S","M","L"],
+    "colors": ["Oatmeal","Black","Sage"],
+    "description": "Pure cashmere in a classic ribbed knit. Understated luxury at its finest.",
+    "images": ["https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80"],
+    "featured": true,
+    "stock": 30
+  }
+]

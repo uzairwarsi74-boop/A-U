@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXE — Premium Fashion</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo" id="loader-text">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="search-toggle" title="Search">&#9906;</button>
+      <button id="dark-toggle">☾</button>
+      <a href="pages/wishlist.html" title="Wishlist">♡</a>
+      <a href="pages/cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="search-box" id="search-box">
+    <input type="text" id="search-input" placeholder="Search products...">
+    <button class="btn btn-primary btn-sm" id="search-btn">Go</button>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="index.html">Home</a>
+  <a href="pages/products.html">Shop</a>
+  <a href="pages/about.html">About</a>
+  <a href="pages/contact.html">Contact</a>
+</nav>
+
+<section class="hero" id="hero">
+  <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80" alt="Hero" class="hero-bg" id="hero-bg-img">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-overline">New Collection 2025</div>
+    <h1 id="hero-heading">Timeless Style.<br>Modern Soul.</h1>
+    <p id="hero-subheading">Curated fashion for those who value quality and enduring elegance.</p>
+    <a href="pages/products.html" class="btn btn-white" id="hero-btn">Shop the Collection</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px">
+      <span class="overline">Explore</span>
+      <h2 class="section-title mt-8">Shop by Category</h2>
+    </div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--color-surface)">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px">
+      <span class="overline">Curated Picks</span>
+      <h2 class="section-title mt-8">Featured Products</h2>
+    </div>
+    <div class="products-grid" id="featured-products"></div>
+    <div class="text-center mt-48"><a href="pages/products.html" class="btn btn-outline">View All Products</a></div>
+  </div>
+</section>
+
+<section style="background:var(--color-primary);color:#fff;text-align:center;padding:72px 0;">
+  <div class="container">
+    <span class="overline" style="color:var(--color-accent)">Limited Offer</span>
+    <h2 style="color:#fff;font-weight:300;margin:12px 0 16px">End of Season Sale</h2>
+    <p style="color:rgba(255,255,255,.7);margin-bottom:28px">Up to 40% off selected styles.</p>
+    <a href="pages/products.html?sale=true" class="btn btn-accent">Shop Sale</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container about-grid">
+    <div class="reveal"><img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80" alt="About" class="about-image" id="about-teaser-img" style="width:100%"></div>
+    <div class="reveal">
+      <span class="overline">Our Story</span>
+      <h2 class="section-title mt-8" id="about-heading">Crafted with Purpose</h2>
+      <p style="color:var(--color-muted);line-height:1.85;margin:20px 0 28px" id="about-teaser-text">Born from a passion for timeless fashion, LUXE curates premium clothing that transcends trends.</p>
+      <a href="pages/about.html" class="btn btn-outline">Learn Our Story</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name" data-footer-brand>LUXE</div>
+        <p class="footer-tagline" data-footer-tagline>Elevate Your Style</p>
+        <div class="footer-social"><a href="#" id="footer-instagram">📷</a><a href="#" id="footer-facebook">📘</a></div>
+      </div>
+      <div class="footer-col"><h5>Shop</h5><ul>
+        <li><a href="pages/products.html?category=Women">Women</a></li>
+        <li><a href="pages/products.html?category=Men">Men</a></li>
+        <li><a href="pages/products.html?category=Accessories">Accessories</a></li>
+        <li><a href="pages/products.html?sale=true">Sale</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Help</h5><ul>
+        <li><a href="pages/contact.html">Contact</a></li>
+        <li><a href="pages/about.html">About</a></li>
+        <li><a href="pages/faq.html">FAQs</a></li>
+        <li><a href="pages/shipping.html">Shipping</a></li>
+        <li><a href="pages/returns.html">Returns</a></li>
+      </ul></div>
+      <div class="footer-col"><h5>Contact</h5>
+        <p id="footer-email" style="font-size:.85rem;margin-bottom:6px"></p>
+        <p id="footer-phone" style="font-size:.85rem;margin-bottom:6px"></p>
+        <p id="footer-address" style="font-size:.85rem;line-height:1.7"></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p id="footer-copyright">© 2025 LUXE. All rights reserved.</p>
+      <div>
+        <a href="pages/privacy.html">Privacy</a>
+        <a href="pages/terms.html">Terms</a>
+        <a href="admin-login.html" class="admin-access-dot" title="" aria-hidden="true"></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-container"></div>
+<div id="newsletter-popup">
+  <div class="newsletter-box">
+    <button class="newsletter-close" id="newsletter-close">✕</button>
+    <div class="newsletter-box-img"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&q=80" alt="Newsletter"></div>
+    <div class="newsletter-box-body">
+      <h3 id="newsletter-heading">Join the LUXE Circle</h3>
+      <p id="newsletter-subtext">Get exclusive access to new arrivals and private sales.</p>
+      <div class="newsletter-form">
+        <input type="email" id="newsletter-email" placeholder="Your email">
+        <button class="btn btn-primary" id="newsletter-submit">Subscribe</button>
+      </div>
+    </div>
+  </div>
+</div>
+<a href="#" id="wa-btn">💬</a>
+
+<script src="js/store.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

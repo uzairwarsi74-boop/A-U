@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Product — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="search-toggle">&#9906;</button>
+      <button id="dark-toggle">☾</button>
+      <a href="wishlist.html">♡</a>
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="../index.html">Home</a><a href="products.html">Shop</a>
+  <a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav>
+
+<div class="container section" id="product-container">
+  <div class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span>
+    <a href="products.html">Shop</a><span>/</span>
+    <span id="breadcrumb-name">Product</span>
+  </div>
+  <div class="product-detail-grid" id="product-detail">
+    <div class="flex-center" style="min-height:400px">Loading...</div>
+  </div>
+</div>
+
+<!-- Related products -->
+<section class="section" style="background:var(--color-surface)">
+  <div class="container">
+    <h2 class="section-title text-center" style="margin-bottom:36px">You May Also Like</h2>
+    <div class="products-grid" id="related-products"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <p id="footer-copyright">© 2025 LUXE</p>
+      <div><a href="../admin-login.html" class="admin-access-dot" aria-hidden="true"></a></div>
+    </div>
+  </div>
+</footer>
+<div id="toast-container"></div>
+<a href="#" id="wa-btn">💬</a>
+<script src="../js/store.js"></script>
+<script>
+function showToast(msg,type=''){const tc=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;tc.appendChild(t);setTimeout(()=>t.remove(),3500);}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  const cfg=LUXE.getConfig();
+  window.addEventListener('scroll',()=>document.getElementById('site-header').classList.toggle('scrolled',window.scrollY>40));
+  document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('mobile-nav').classList.add('open'));
+  document.getElementById('mobile-nav-close').addEventListener('click',()=>document.getElementById('mobile-nav').classList.remove('open'));
+  LUXE._updateCartBadge();
+  if(cfg.whatsapp_order&&cfg.whatsapp_order.enabled){const wa=document.getElementById('wa-btn');wa.style.display='flex';wa.href='https://wa.me/'+cfg.whatsapp_order.number.replace(/\D/g,'');}
+
+  const id=new URLSearchParams(window.location.search).get('id');
+  const product=LUXE.getById(id);
+  if(!product){document.getElementById('product-detail').innerHTML='<div class="empty-state"><h3>Product not found</h3><a href="products.html" class="btn btn-outline btn-sm mt-16">Back to Shop</a></div>';return;}
+
+  document.title=product.name+' — LUXE';
+  document.getElementById('breadcrumb-name').textContent=product.name;
+  const isSale=product.sale_price&&product.sale_price<product.price;
+  const inWL=LUXE.inWishlist(id);
+
+  const thumbsHTML=(product.images||[]).map((img,i)=>`<img src="${img}" class="gallery-thumb ${i===0?'active':''}" data-idx="${i}" alt="${product.name} ${i+1}">`).join('');
+  const sizesHTML=(product.sizes||[]).map((s,i)=>`<button class="size-btn ${i===0?'selected':''}" data-size="${s}">${s}</button>`).join('');
+  const colorsHTML=(product.colors||[]).map((c,i)=>
+    `<div class="color-swatch ${i===0?'selected':''}" data-color="${c}" title="${c}" style="background:${colorToHex(c)}"></div>`
+  ).join('');
+
+  document.getElementById('product-detail').innerHTML=`
+    <div class="product-gallery">
+      <div class="gallery-main"><img src="${product.images?.[0]||''}" alt="${product.name}" id="main-img"></div>
+      ${product.images&&product.images.length>1?`<div class="gallery-thumbs">${thumbsHTML}</div>`:''}
+    </div>
+    <div class="product-info">
+      <div class="category">${product.category||''}</div>
+      <h1>${product.name}</h1>
+      <div class="product-price-block">
+        ${isSale
+          ?`<span class="price price-sale">${LUXE.formatPrice(product.sale_price)}</span><span class="price price-original">${LUXE.formatPrice(product.price)}</span>`
+          :`<span class="price">${LUXE.formatPrice(product.price)}</span>`}
+      </div>
+      ${sizesHTML?`<div class="option-label">Size</div><div class="size-options">${sizesHTML}</div>`:''}
+      ${colorsHTML?`<div class="option-label">Color</div><div class="color-options">${colorsHTML}</div>`:''}
+      <div class="qty-row">
+        <div class="option-label">Qty</div>
+        <div class="qty-ctrl">
+          <button id="qty-minus">−</button>
+          <input type="number" id="qty-input" value="1" min="1" max="${product.stock||99}">
+          <button id="qty-plus">+</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+        <button class="btn btn-primary add-cart-btn" id="add-to-cart-btn">Add to Cart</button>
+        <button class="wish-btn ${inWL?'active':''}" id="wish-btn" style="position:static;background:var(--color-bg);border:1px solid var(--color-border);width:44px;height:44px;font-size:1.2rem">${inWL?'♥':'♡'}</button>
+      </div>
+      <p style="font-size:.85rem;color:var(--color-muted);margin-bottom:24px">${product.description||''}</p>
+      <div class="product-meta">
+        ${product.sku?`<p><strong>SKU:</strong> ${product.sku}</p>`:''}
+        ${product.stock?`<p><strong>In Stock:</strong> ${product.stock} units</p>`:''}
+      </div>
+    </div>`;
+
+  // Gallery thumbs
+  document.querySelectorAll('.gallery-thumb').forEach(thumb=>{
+    thumb.addEventListener('click',()=>{
+      document.getElementById('main-img').src=product.images[+thumb.dataset.idx];
+      document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
+
+  // Size select
+  let selSize=product.sizes?.[0]||'One Size';
+  document.querySelectorAll('.size-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected'); selSize=btn.dataset.size;
+    });
+  });
+
+  // Color select
+  let selColor=product.colors?.[0]||'Default';
+  document.querySelectorAll('.color-swatch').forEach(sw=>{
+    sw.addEventListener('click',()=>{
+      document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+      sw.classList.add('selected'); selColor=sw.dataset.color;
+    });
+  });
+
+  // Qty
+  const qtyInput=document.getElementById('qty-input');
+  document.getElementById('qty-minus').addEventListener('click',()=>{if(+qtyInput.value>1)qtyInput.value=+qtyInput.value-1;});
+  document.getElementById('qty-plus').addEventListener('click',()=>{qtyInput.value=+qtyInput.value+1;});
+
+  // Add to cart
+  document.getElementById('add-to-cart-btn').addEventListener('click',()=>{
+    LUXE.addToCart(id,selSize,selColor,+qtyInput.value);
+    showToast(product.name+' added to cart!','success');
+  });
+
+  // Wishlist
+  document.getElementById('wish-btn').addEventListener('click',()=>{
+    const added=LUXE.toggleWishlist(id);
+    const btn=document.getElementById('wish-btn');
+    btn.classList.toggle('active',added);btn.textContent=added?'♥':'♡';
+    showToast(added?'Added to wishlist':'Removed from wishlist');
+  });
+
+  // Related products
+  const related=LUXE.getByCategory(product.category).filter(p=>p.id!==id).slice(0,4);
+  const rg=document.getElementById('related-products');
+  if(related.length){
+    rg.innerHTML=related.map(p=>{
+      const s=p.sale_price&&p.sale_price<p.price;
+      return `<div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+        <div class="product-card-image"><img src="${p.images?.[0]||''}" alt="${p.name}" loading="lazy">
+          ${s?'<span class="badge-sale">Sale</span>':''}
+        </div>
+        <div class="product-card-body"><div class="category">${p.category}</div><h4>${p.name}</h4>
+          <div class="price-row">${s?`<span class="price price-sale">${LUXE.formatPrice(p.sale_price)}</span><span class="price price-original">${LUXE.formatPrice(p.price)}</span>`:`<span class="price">${LUXE.formatPrice(p.price)}</span>`}</div>
+        </div></div>`;
+    }).join('');
+  } else rg.parentElement.parentElement.style.display='none';
+});
+
+function colorToHex(name){
+  const map={black:'#1a1a1a',white:'#ffffff',ivory:'#fffff0',blush:'#ffb6c1',navy:'#001f5b',camel:'#c19a6b',charcoal:'#36454f',sage:'#b2ac88',oatmeal:'#d4c5a9',tan:'#d2b48c',burgundy:'#800020',gold:'#ffd700',silver:'#c0c0c0',olive:'#808000',stone:'#928e85'};
+  return map[name.toLowerCase()]||'#888888';
+}
+</script>
+</body></html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Cart — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="dark-toggle">☾</button>
+      <a href="wishlist.html">♡</a>
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+    </div>
+  </div>
+</header>
+<div class="page-banner"><div class="container"><h1>Your Cart</h1></div></div>
+<div class="container section">
+  <div id="cart-main"></div>
+</div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <p id="footer-copyright">© 2025 LUXE</p>
+      <div><a href="../admin-login.html" class="admin-access-dot" aria-hidden="true"></a></div>
+    </div>
+  </div>
+</footer>
+<div id="toast-container"></div>
+<script src="../js/store.js"></script>
+<script>
+function showToast(msg,type=''){const tc=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;tc.appendChild(t);setTimeout(()=>t.remove(),3500);}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  LUXE._updateCartBadge();
+  renderCart();
+});
+
+function renderCart(){
+  const cart=LUXE.getCart();
+  const main=document.getElementById('cart-main');
+  if(!cart.length){
+    main.innerHTML=`<div class="empty-state"><div class="icon">🛍️</div><h3>Your cart is empty</h3><p>Discover our new collection.</p><a href="products.html" class="btn btn-primary mt-16">Start Shopping</a></div>`;
+    return;
+  }
+  const shipping=cart.length?15:0;
+  const subtotal=LUXE.cartTotal();
+  main.innerHTML=`
+  <div class="cart-layout">
+    <div>
+      <div id="cart-items"></div>
+    </div>
+    <div class="cart-summary">
+      <h3 style="margin-bottom:20px;font-family:var(--font-heading)">Order Summary</h3>
+      <div class="summary-row"><span>Subtotal</span><span id="sum-subtotal">${LUXE.formatPrice(subtotal)}</span></div>
+      <div class="summary-row"><span>Shipping</span><span>${LUXE.formatPrice(shipping)}</span></div>
+      <div class="coupon-row">
+        <input type="text" id="coupon-input" placeholder="Coupon code">
+        <button class="btn btn-outline btn-sm" id="apply-coupon">Apply</button>
+      </div>
+      <div id="discount-row" class="summary-row" style="display:none;color:var(--color-success)"><span>Discount</span><span id="discount-amount">-$0</span></div>
+      <div class="summary-row total"><span>Total</span><span id="sum-total">${LUXE.formatPrice(subtotal+shipping)}</span></div>
+      <a href="checkout.html" class="btn btn-primary btn-full mt-16" style="margin-top:20px">Proceed to Checkout</a>
+      <a href="products.html" style="display:block;text-align:center;margin-top:12px;font-size:.8rem;color:var(--color-muted)">Continue Shopping</a>
+    </div>
+  </div>`;
+
+  const itemsEl=document.getElementById('cart-items');
+  itemsEl.innerHTML=cart.map((item,i)=>`
+    <div class="cart-item" data-index="${i}">
+      <img src="${item.image||'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200&q=70'}" class="cart-item-img" alt="${item.name}">
+      <div>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-meta">Size: ${item.size} &nbsp;|&nbsp; Color: ${item.color}</div>
+        <div class="qty-ctrl" style="margin-bottom:8px">
+          <button class="qty-dec" data-i="${i}">−</button>
+          <input type="number" value="${item.qty}" min="1" class="qty-val" data-i="${i}" style="width:44px;border:none;border-left:1px solid var(--color-border);border-right:1px solid var(--color-border);padding:6px 0;text-align:center;background:transparent;color:var(--color-primary)">
+          <button class="qty-inc" data-i="${i}">+</button>
+        </div>
+        <button class="cart-remove" data-i="${i}">Remove</button>
+      </div>
+      <div style="font-weight:500">${LUXE.formatPrice(item.price*item.qty)}</div>
+    </div>`).join('');
+
+  itemsEl.querySelectorAll('.qty-dec').forEach(btn=>btn.addEventListener('click',()=>{const i=+btn.dataset.i;LUXE.updateCartQty(i,LUXE.getCart()[i].qty-1);renderCart();}));
+  itemsEl.querySelectorAll('.qty-inc').forEach(btn=>btn.addEventListener('click',()=>{const i=+btn.dataset.i;LUXE.updateCartQty(i,LUXE.getCart()[i].qty+1);renderCart();}));
+  itemsEl.querySelectorAll('.qty-val').forEach(inp=>inp.addEventListener('change',()=>{LUXE.updateCartQty(+inp.dataset.i,+inp.value);renderCart();}));
+  itemsEl.querySelectorAll('.cart-remove').forEach(btn=>btn.addEventListener('click',()=>{LUXE.removeFromCart(+btn.dataset.i);renderCart();showToast('Item removed');}));
+
+  document.getElementById('apply-coupon').addEventListener('click',()=>{
+    const code=document.getElementById('coupon-input').value.trim().toUpperCase();
+    // Basic coupon logic — admin can extend
+    const coupons={'LUXE15':0.15,'SAVE10':0.10,'WELCOME20':0.20};
+    const rate=coupons[code];
+    if(rate){
+      const disc=subtotal*rate;
+      document.getElementById('discount-row').style.display='flex';
+      document.getElementById('discount-amount').textContent='-'+LUXE.formatPrice(disc);
+      document.getElementById('sum-total').textContent=LUXE.formatPrice(subtotal+shipping-disc);
+      sessionStorage.setItem('luxe_coupon',JSON.stringify({code,rate,discount:disc}));
+      showToast('Coupon applied! '+Math.round(rate*100)+'% off','success');
+    } else showToast('Invalid coupon code','error');
+  });
+}
+</script>
+</body></html>

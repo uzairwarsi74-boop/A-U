@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Order Confirmed — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header"><div class="container header-inner"><a href="../index.html" class="logo-link" data-logo>LUXE</a></div></header>
+<div class="container">
+  <div class="order-confirm">
+    <div class="check-circle">✓</div>
+    <h1 style="font-size:2.2rem;margin-bottom:12px">Order Confirmed!</h1>
+    <p style="color:var(--color-muted);margin-bottom:8px">Thank you for your purchase.</p>
+    <p id="order-id" style="font-size:.85rem;color:var(--color-muted);margin-bottom:32px"></p>
+    <div id="order-details" style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:24px;text-align:left;margin-bottom:32px"></div>
+    <a href="../index.html" class="btn btn-primary">Continue Shopping</a>
+  </div>
+</div>
+<script src="../js/store.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  const id=new URLSearchParams(window.location.search).get('id');
+  const orders=LUXE.getOrders();
+  const order=orders.find(o=>o.id===id);
+  if(!order){document.querySelector('.order-confirm').innerHTML='<h2>Order not found</h2><a href="../index.html" class="btn btn-primary mt-16">Home</a>';return;}
+  document.getElementById('order-id').textContent='Order #'+order.id;
+  const c=order.customer||{};
+  document.getElementById('order-details').innerHTML=`
+    <h4 style="margin-bottom:16px">Order Details</h4>
+    <p style="margin-bottom:6px"><strong>Name:</strong> ${c.first_name||''} ${c.last_name||''}</p>
+    <p style="margin-bottom:6px"><strong>Email:</strong> ${c.email||''}</p>
+    <p style="margin-bottom:6px"><strong>Phone:</strong> ${c.phone||''}</p>
+    <p style="margin-bottom:16px"><strong>Address:</strong> ${c.address||''}, ${c.city||''}</p>
+    <p style="margin-bottom:6px"><strong>Payment:</strong> ${order.payment?.toUpperCase()||'COD'}</p>
+    <p style="margin-bottom:6px"><strong>Total:</strong> ${LUXE.formatPrice(order.total)}</p>
+    ${order.payment==='bank'?'<p style="margin-top:12px;padding:12px;background:var(--color-bg);border-radius:4px;font-size:.85rem">Please complete your bank transfer to confirm your order. We will process it once payment is received.</p>':''}`;
+});
+</script>
+</body></html>

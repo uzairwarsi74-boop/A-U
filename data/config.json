@@ -1,0 +1,94 @@
+{
+  "store": {
+    "name": "LUXE",
+    "tagline": "Elevate Your Style",
+    "logo_text": "LUXE",
+    "favicon": "",
+    "logo_image": "",
+    "tab_title": "LUXE — Premium Fashion",
+    "loading_text": "LUXE"
+  },
+  "colors": {
+    "primary": "#1a1a1a",
+    "secondary": "#c9a96e",
+    "background": "#fafaf8",
+    "header_bg": "#1a1a1a",
+    "header_text": "#ffffff",
+    "button_bg": "#1a1a1a",
+    "button_text": "#ffffff",
+    "accent": "#c9a96e"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Jost"
+  },
+  "hero": {
+    "heading": "New Collection 2025",
+    "subheading": "Timeless elegance for the modern wardrobe",
+    "button_text": "Shop Now",
+    "button_link": "pages/products.html",
+    "background_image": "",
+    "overlay_opacity": "0.35"
+  },
+  "banner": {
+    "text": "FREE SHIPPING ON ORDERS OVER $150 — USE CODE: LUXE15 FOR 15% OFF",
+    "bg_color": "#c9a96e",
+    "text_color": "#1a1a1a",
+    "visible": true
+  },
+  "contact": {
+    "email": "hello@luxestore.com",
+    "phone": "+1 (555) 000-0000",
+    "address": "123 Fashion Avenue, New York, NY 10001",
+    "whatsapp": "",
+    "instagram": "",
+    "facebook": ""
+  },
+  "about": {
+    "heading": "Our Story",
+    "content": "Born from a passion for timeless fashion, LUXE curates premium clothing that transcends trends. Every piece is selected for its quality, craftsmanship, and enduring style. We believe that true luxury is not about excess — it is about the perfect piece, worn with confidence.",
+    "image": ""
+  },
+  "footer": {
+    "brand_name": "LUXE",
+    "tagline": "Elevate Your Style",
+    "copyright": "© 2025 LUXE. All rights reserved.",
+    "policy_text": "We are committed to quality and customer satisfaction."
+  },
+  "payment": {
+    "cod_enabled": true,
+    "bank_enabled": true,
+    "bank_name": "Standard Bank",
+    "bank_account_title": "LUXE Store",
+    "bank_iban": "XX00 0000 0000 0000 0000 00",
+    "easypaisa_enabled": false,
+    "easypaisa_number": "",
+    "jazzcash_enabled": false,
+    "jazzcash_number": "",
+    "stripe_enabled": false,
+    "paypal_enabled": false
+  },
+  "pages": {
+    "home": { "label": "Home", "visible": true, "order": 1 },
+    "products": { "label": "Shop", "visible": true, "order": 2 },
+    "about": { "label": "About", "visible": true, "order": 3 },
+    "contact": { "label": "Contact", "visible": true, "order": 4 }
+  },
+  "newsletter_popup": {
+    "enabled": true,
+    "heading": "Join the LUXE Circle",
+    "subtext": "Get exclusive access to new arrivals and private sales.",
+    "delay_seconds": 4
+  },
+  "dark_mode": {
+    "enabled": true
+  },
+  "whatsapp_order": {
+    "enabled": false,
+    "number": "",
+    "message": "Hi! I'd like to place an order."
+  },
+  "admin": {
+    "secret_path": "admin-login.html"
+  }
+}

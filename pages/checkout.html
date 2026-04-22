@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Checkout — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <div class="header-actions">
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+    </div>
+  </div>
+</header>
+<div class="page-banner"><div class="container"><h1>Checkout</h1></div></div>
+<div class="container section">
+  <div id="checkout-main"></div>
+</div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <p id="footer-copyright">© 2025 LUXE</p>
+    </div>
+  </div>
+</footer>
+<div id="toast-container"></div>
+<script src="../js/store.js"></script>
+<script>
+function showToast(msg,type=''){const tc=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;tc.appendChild(t);setTimeout(()=>t.remove(),3500);}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  LUXE._updateCartBadge();
+  const cfg=LUXE.getConfig();
+  const cart=LUXE.getCart();
+  const main=document.getElementById('checkout-main');
+  if(!cart.length){
+    main.innerHTML='<div class="empty-state"><h3>Your cart is empty</h3><a href="products.html" class="btn btn-primary mt-16">Shop Now</a></div>';
+    return;
+  }
+  const couponData=sessionStorage.getItem('luxe_coupon')?JSON.parse(sessionStorage.getItem('luxe_coupon')):null;
+  const subtotal=LUXE.cartTotal();
+  const shipping=15;
+  const discount=couponData?couponData.discount:0;
+  const total=subtotal+shipping-discount;
+  const pay=cfg.payment||{};
+
+  main.innerHTML=`
+  <div class="checkout-layout">
+    <form id="checkout-form" onsubmit="return false">
+      <div class="checkout-section">
+        <h3>Contact Information</h3>
+        <div class="form-grid">
+          <div class="form-field"><label>First Name *</label><input name="first_name" required></div>
+          <div class="form-field"><label>Last Name *</label><input name="last_name" required></div>
+          <div class="form-field full"><label>Email *</label><input name="email" type="email" required></div>
+          <div class="form-field full"><label>Phone *</label><input name="phone" required></div>
+        </div>
+      </div>
+      <div class="checkout-section">
+        <h3>Shipping Address</h3>
+        <div class="form-grid">
+          <div class="form-field full"><label>Address *</label><input name="address" required></div>
+          <div class="form-field"><label>City *</label><input name="city" required></div>
+          <div class="form-field"><label>Postal Code</label><input name="postal"></div>
+          <div class="form-field full"><label>Country *</label>
+            <select name="country">
+              <option>Pakistan</option><option>United States</option><option>United Kingdom</option>
+              <option>Canada</option><option>Australia</option><option>UAE</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-field full"><label>Notes (optional)</label><textarea name="notes" rows="3" style="resize:vertical"></textarea></div>
+        </div>
+      </div>
+      <div class="checkout-section">
+        <h3>Payment Method</h3>
+        <div class="payment-options">
+          ${pay.cod_enabled!==false?`
+          <label class="payment-option">
+            <input type="radio" name="payment_method" value="cod" checked>
+            <div><div class="payment-option-label">Cash on Delivery</div><div class="payment-option-desc">Pay when your order arrives</div></div>
+          </label>`:''}
+          ${pay.bank_enabled?`
+          <label class="payment-option">
+            <input type="radio" name="payment_method" value="bank">
+            <div><div class="payment-option-label">Bank Transfer</div><div class="payment-option-desc">Transfer to our bank account</div></div>
+          </label>
+          <div class="bank-details" id="bank-details">
+            <strong>${pay.bank_name||'Bank'}</strong><br>
+            Account: ${pay.bank_account_title||''}<br>
+            IBAN: ${pay.bank_iban||''}
+          </div>`:''}
+          ${pay.easypaisa_enabled?`
+          <label class="payment-option">
+            <input type="radio" name="payment_method" value="easypaisa">
+            <div><div class="payment-option-label">EasyPaisa</div><div class="payment-option-desc">Send to: ${pay.easypaisa_number||''}</div></div>
+          </label>`:''}
+          ${pay.jazzcash_enabled?`
+          <label class="payment-option">
+            <input type="radio" name="payment_method" value="jazzcash">
+            <div><div class="payment-option-label">JazzCash</div><div class="payment-option-desc">Send to: ${pay.jazzcash_number||''}</div></div>
+          </label>`:''}
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="place-order-btn" style="font-size:1rem;padding:16px">Place Order</button>
+    </form>
+
+    <div>
+      <div class="cart-summary" style="position:sticky;top:96px">
+        <h3 style="margin-bottom:20px;font-family:var(--font-heading)">Order Summary</h3>
+        <div class="order-items">
+          ${cart.map(item=>`
+          <div class="order-item-row">
+            <img src="${item.image||''}" class="order-item-thumb" alt="${item.name}">
+            <div><div class="order-item-name">${item.name}</div><div class="order-item-meta">${item.size} / ${item.color} × ${item.qty}</div></div>
+            <div class="order-item-price">${LUXE.formatPrice(item.price*item.qty)}</div>
+          </div>`).join('')}
+        </div>
+        <div class="summary-row"><span>Subtotal</span><span>${LUXE.formatPrice(subtotal)}</span></div>
+        <div class="summary-row"><span>Shipping</span><span>${LUXE.formatPrice(shipping)}</span></div>
+        ${discount?`<div class="summary-row" style="color:var(--color-success)"><span>Discount</span><span>-${LUXE.formatPrice(discount)}</span></div>`:''}
+        <div class="summary-row total"><span>Total</span><span>${LUXE.formatPrice(total)}</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  // Show bank details when bank selected
+  document.querySelectorAll('input[name="payment_method"]').forEach(radio=>{
+    radio.addEventListener('change',()=>{
+      const bd=document.getElementById('bank-details');
+      if(bd)bd.style.display=radio.value==='bank'?'block':'none';
+    });
+  });
+
+  document.getElementById('place-order-btn').addEventListener('click',()=>{
+    const form=document.getElementById('checkout-form');
+    const data={};
+    new FormData(form).forEach((v,k)=>data[k]=v);
+    const required=['first_name','last_name','email','phone','address','city','country'];
+    for(const f of required){if(!data[f]){showToast('Please fill in '+f.replace('_',' '),'error');return;}}
+    const order=LUXE.placeOrder(data,couponData?.code||'');
+    if(order){
+      sessionStorage.removeItem('luxe_coupon');
+      window.location.href='order-confirm.html?id='+order.id;
+    }
+  });
+});
+</script>
+</body></html>

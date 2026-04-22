@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Messages — LUXE Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="adm-layout">
+  <div class="adm-sidebar" id="adm-sidebar">
+    <div class="adm-sidebar-logo"><span id="sidebar-brand">LUXE</span><span>Admin Panel</span></div>
+    <nav class="adm-nav">
+      <div class="adm-nav-section">Overview</div>
+      <a href="dashboard.html">◈ Dashboard</a><a href="orders.html">📦 Orders</a>
+      <div class="adm-nav-section">Catalog</div>
+      <a href="products.html">👗 Products</a><a href="cards.html">▤ Homepage Cards</a>
+      <div class="adm-nav-section">Store</div>
+      <a href="branding.html">✦ Branding</a><a href="design.html">🎨 Design</a>
+      <a href="content.html">✏ Content</a><a href="images.html">🖼 Images</a>
+      <a href="pages.html">📄 Pages</a><a href="payment.html">💳 Payment</a>
+      <div class="adm-nav-section">Customers</div>
+      <a href="newsletter.html">✉ Newsletter</a><a href="messages.html">💬 Messages</a>
+      <div class="adm-nav-section">Settings</div>
+      <a href="settings.html">⚙ Settings</a>
+    </nav>
+    <div class="adm-sidebar-footer"><a href="../index.html" target="_blank">🏬 View Store</a></div>
+  </div>
+  <div class="adm-main">
+    <div class="adm-topbar">
+      <div class="flex-gap"><button id="sidebar-toggle" style="font-size:1.2rem;color:#888">☰</button><h2 id="adm-page-title">Contact Messages</h2></div>
+      <div class="adm-topbar-actions"><button class="adm-logout-btn">Sign Out</button></div>
+    </div>
+    <div class="adm-content">
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>Messages (<span id="msg-count">0</span>)</h3></div>
+        <div class="adm-card-body" style="padding:0">
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Subject</th><th>Actions</th></tr></thead>
+              <tbody id="msg-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Message detail modal -->
+<div class="adm-modal-overlay" id="msg-modal">
+  <div class="adm-modal">
+    <div class="adm-modal-header"><h3>Message</h3><button class="adm-modal-close" onclick="closeModal('msg-modal')">✕</button></div>
+    <div class="adm-modal-body" id="msg-detail"></div>
+    <div class="adm-modal-footer"><button class="adm-btn adm-btn-outline" onclick="closeModal('msg-modal')">Close</button></div>
+  </div>
+</div>
+<div id="adm-toast"></div>
+<script src="../js/store.js"></script>
+<script src="js/admin.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await initAdminPage('Messages');
+  if (!ok) return;
+  renderMessages();
+});
+function renderMessages() {
+  const msgs = JSON.parse(localStorage.getItem('luxe_messages')||'[]').reverse();
+  document.getElementById('msg-count').textContent = msgs.length;
+  const tbody = document.getElementById('msg-table');
+  if (!msgs.length) { tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:#aaa">No messages yet.</td></tr>'; return; }
+  tbody.innerHTML = msgs.map((m,i) => `<tr>
+    <td style="font-size:.82rem">${new Date(m.date).toLocaleDateString()}</td>
+    <td>${m.first_name||''} ${m.last_name||''}</td>
+    <td>${m.email||''}</td>
+    <td>${m.subject||''}</td>
+    <td><button class="adm-btn adm-btn-outline adm-btn-xs" onclick="viewMsg(${msgs.length-1-i})">View</button></td>
+  </tr>`).join('');
+}
+function viewMsg(i) {
+  const msgs = JSON.parse(localStorage.getItem('luxe_messages')||'[]');
+  const m = msgs[i]; if (!m) return;
+  document.getElementById('msg-detail').innerHTML = `
+    <p style="margin-bottom:8px"><strong>From:</strong> ${m.first_name||''} ${m.last_name||''} &lt;${m.email||''}&gt;</p>
+    <p style="margin-bottom:8px"><strong>Subject:</strong> ${m.subject||''}</p>
+    <p style="margin-bottom:8px"><strong>Date:</strong> ${new Date(m.date).toLocaleString()}</p>
+    <hr style="border:none;border-top:1px solid #e0ddd8;margin:16px 0">
+    <p style="line-height:1.7">${(m.message||'').replace(/\n/g,'<br>')}</p>
+    <div style="margin-top:16px"><a href="mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject||'')}" class="adm-btn adm-btn-primary adm-btn-sm">Reply via Email</a></div>`;
+  openModal('msg-modal');
+}
+</script>
+</body></html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>About — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="dark-toggle">☾</button>
+      <a href="wishlist.html">♡</a>
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+    </div>
+  </div>
+</header>
+<div class="page-banner">
+  <div class="container"><h1 id="about-heading">Our Story</h1></div>
+</div>
+<section class="section">
+  <div class="container about-grid">
+    <div>
+      <img id="about-image" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80" alt="About" style="width:100%;border-radius:8px;aspect-ratio:4/5;object-fit:cover">
+    </div>
+    <div>
+      <span class="overline">Who We Are</span>
+      <h2 class="section-title mt-8" id="about-sub-heading">Crafted with Purpose</h2>
+      <div id="about-content" style="color:var(--color-muted);line-height:1.9;margin:20px 0 28px"></div>
+      <a href="products.html" class="btn btn-primary">Shop the Collection</a>
+    </div>
+  </div>
+</section>
+<section class="section" style="background:var(--color-surface)">
+  <div class="container text-center">
+    <span class="overline">Our Values</span>
+    <h2 class="section-title mt-8" style="margin-bottom:48px">What We Stand For</h2>
+    <div class="grid-3">
+      <div style="padding:32px 24px">
+        <div style="font-size:2rem;margin-bottom:16px">✦</div>
+        <h4 style="margin-bottom:10px">Quality First</h4>
+        <p style="color:var(--color-muted);font-size:.9rem">Every piece is selected for its craftsmanship and lasting appeal. We refuse to compromise on materials or construction.</p>
+      </div>
+      <div style="padding:32px 24px">
+        <div style="font-size:2rem;margin-bottom:16px">◇</div>
+        <h4 style="margin-bottom:10px">Timeless Design</h4>
+        <p style="color:var(--color-muted);font-size:.9rem">We curate pieces that transcend seasonal trends, built for wardrobes that endure rather than expire.</p>
+      </div>
+      <div style="padding:32px 24px">
+        <div style="font-size:2rem;margin-bottom:16px">○</div>
+        <h4 style="margin-bottom:10px">Conscious Choice</h4>
+        <p style="color:var(--color-muted);font-size:.9rem">We work with partners who share our commitment to responsible production and ethical business practices.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <p id="footer-copyright">© 2025 LUXE</p>
+      <div><a href="../admin-login.html" class="admin-access-dot" aria-hidden="true"></a></div>
+    </div>
+  </div>
+</footer>
+<script src="../js/store.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  const cfg=LUXE.getConfig();
+  LUXE._updateCartBadge();
+  window.addEventListener('scroll',()=>document.getElementById('site-header').classList.toggle('scrolled',window.scrollY>40));
+  if(cfg.about){
+    if(cfg.about.heading)document.getElementById('about-heading').textContent=cfg.about.heading;
+    if(cfg.about.content)document.getElementById('about-content').textContent=cfg.about.content;
+    if(cfg.about.image){document.getElementById('about-image').src=cfg.about.image;}
+  }
+  if(cfg.footer&&document.getElementById('footer-copyright'))document.getElementById('footer-copyright').textContent=cfg.footer.copyright||'';
+});
+</script>
+</body></html>

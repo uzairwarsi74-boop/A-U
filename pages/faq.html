@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>faq — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<header class="site-header"><div class="container header-inner">
+  <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+  <div class="header-actions"><a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a></div>
+</div></header>
+<div class="page-banner"><div class="container"><h1 id="page-heading">faq</h1></div></div>
+<div class="container section" style="max-width:800px">
+  <div id="page-content" style="line-height:1.9;color:var(--color-muted)">
+    <p>This page content is managed from the Admin Panel.</p>
+  </div>
+</div>
+<footer class="site-footer"><div class="container"><div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)"><p>© 2025 LUXE</p></div></div></footer>
+<script src="../js/store.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+  await new Promise(r=>setTimeout(r,60));
+  LUXE._updateCartBadge();
+  const key='luxe_page_faq';
+  const stored=localStorage.getItem(key);
+  if(stored){const d=JSON.parse(stored);if(d.heading)document.getElementById('page-heading').textContent=d.heading;if(d.content)document.getElementById('page-content').innerHTML=d.content;}
+});
+</script>
+</body></html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Shop — LUXE</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="page-loader"><div class="loader-logo" id="loader-text">LUXE</div><div class="loader-bar"></div></div>
+<div id="top-banner" style="display:none"><span id="banner-text"></span></div>
+<header class="site-header" id="site-header">
+  <div class="container header-inner">
+    <a href="../index.html" class="logo-link" data-logo>LUXE</a>
+    <nav class="main-nav"><ul id="nav-links"></ul></nav>
+    <div class="header-actions">
+      <button id="search-toggle">&#9906;</button>
+      <button id="dark-toggle">☾</button>
+      <a href="wishlist.html">♡</a>
+      <a href="cart.html" class="cart-icon-wrap">🛒<span class="cart-badge">0</span></a>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="search-box" id="search-box">
+    <input type="text" id="search-input" placeholder="Search products...">
+    <button class="btn btn-primary btn-sm" id="search-btn">Go</button>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-close" id="mobile-nav-close">✕</button>
+  <a href="../index.html">Home</a><a href="products.html">Shop</a>
+  <a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav>
+<div class="page-banner">
+  <div class="container"><h1 id="page-title">Shop</h1><p id="page-subtitle">All Collections</p></div>
+</div>
+<div class="container section">
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="">All</button>
+    <button class="filter-btn" data-cat="Women">Women</button>
+    <button class="filter-btn" data-cat="Men">Men</button>
+    <button class="filter-btn" data-cat="Accessories">Accessories</button>
+    <select class="sort-select" id="sort-select">
+      <option value="">Sort: Featured</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="name">Name A–Z</option>
+    </select>
+  </div>
+  <div id="products-count" style="font-size:.82rem;color:var(--color-muted);margin-bottom:24px"></div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="padding-top:24px;border-top:1px solid rgba(255,255,255,.1)">
+      <p id="footer-copyright">© 2025 LUXE</p>
+      <div><a href="privacy.html">Privacy</a>&nbsp;&nbsp;<a href="terms.html">Terms</a>&nbsp;&nbsp;
+      <a href="../admin-login.html" class="admin-access-dot" aria-hidden="true"></a></div>
+    </div>
+  </div>
+</footer>
+<div id="toast-container"></div>
+<a href="#" id="wa-btn">💬</a>
+<script src="../js/store.js"></script>
+<script>
+function showToast(msg,type=''){const tc=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;tc.appendChild(t);setTimeout(()=>t.remove(),3500);}
+document.addEventListener('DOMContentLoaded', async () => {
+  await new Promise(r=>setTimeout(r,80));
+  document.getElementById('page-loader').classList.add('hidden');
+  const cfg = LUXE.getConfig();
+  window.addEventListener('scroll',()=>document.getElementById('site-header').classList.toggle('scrolled',window.scrollY>40));
+  document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('mobile-nav').classList.add('open'));
+  document.getElementById('mobile-nav-close').addEventListener('click',()=>document.getElementById('mobile-nav').classList.remove('open'));
+  document.getElementById('search-toggle').addEventListener('click',()=>document.getElementById('search-box').classList.toggle('open'));
+  document.getElementById('search-btn').addEventListener('click',()=>{const q=document.getElementById('search-input').value.trim();if(q)window.location.href='products.html?search='+encodeURIComponent(q);});
+  LUXE._updateCartBadge();
+  if(cfg.footer&&document.getElementById('footer-copyright'))document.getElementById('footer-copyright').textContent=cfg.footer.copyright||'';
+  if(cfg.whatsapp_order&&cfg.whatsapp_order.enabled){const wa=document.getElementById('wa-btn');wa.style.display='flex';wa.href='https://wa.me/'+cfg.whatsapp_order.number.replace(/\D/g,'');}
+
+  const params=new URLSearchParams(window.location.search);
+  const urlCat=params.get('category')||'';
+  const urlSale=params.get('sale')==='true';
+  const urlSrch=params.get('search')||'';
+  if(urlSrch){document.getElementById('page-title').textContent='Search Results';document.getElementById('page-subtitle').textContent='"'+urlSrch+'"';}
+  else if(urlSale){document.getElementById('page-title').textContent='Sale';document.getElementById('page-subtitle').textContent='Up to 40% Off';}
+  else if(urlCat){document.getElementById('page-title').textContent=urlCat;document.getElementById('page-subtitle').textContent='';}
+
+  let currentCat=urlCat,currentSort='';
+  document.querySelectorAll('.filter-btn').forEach(btn=>{
+    if(btn.dataset.cat===urlCat)btn.classList.add('active');
+    btn.addEventListener('click',()=>{document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentCat=btn.dataset.cat;renderProducts();});
+  });
+  document.getElementById('sort-select').addEventListener('change',e=>{currentSort=e.target.value;renderProducts();});
+
+  function renderProducts(){
+    let products=LUXE.getProducts();
+    if(urlSrch)products=LUXE.search(urlSrch);
+    else if(urlSale)products=products.filter(p=>p.sale_price&&p.sale_price<p.price);
+    else if(currentCat)products=products.filter(p=>p.category===currentCat);
+    if(currentSort==='price-asc')products.sort((a,b)=>(a.sale_price||a.price)-(b.sale_price||b.price));
+    else if(currentSort==='price-desc')products.sort((a,b)=>(b.sale_price||b.price)-(a.sale_price||a.price));
+    else if(currentSort==='name')products.sort((a,b)=>a.name.localeCompare(b.name));
+    const grid=document.getElementById('products-grid');
+    document.getElementById('products-count').textContent=products.length+' products';
+    if(!products.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><h3>No products found</h3><p>Try a different search.</p><a href="products.html" class="btn btn-outline btn-sm mt-16">Clear Filter</a></div>';return;}
+    grid.innerHTML=products.map(p=>{
+      const isSale=p.sale_price&&p.sale_price<p.price,inWL=LUXE.inWishlist(p.id);
+      return `<div class="product-card" onclick="location.href='product.html?id=${p.id}'">
+        <div class="product-card-image">
+          <img src="${p.images?.[0]||'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=70'}" alt="${p.name}" loading="lazy">
+          ${isSale?'<span class="badge-sale">Sale</span>':''}
+          <button class="wish-btn ${inWL?'active':''}" data-id="${p.id}" onclick="event.stopPropagation()">${inWL?'♥':'♡'}</button>
+          <div class="quick-add" data-id="${p.id}">Quick Add</div>
+        </div>
+        <div class="product-card-body">
+          <div class="category">${p.category||''}</div>
+          <h4>${p.name}</h4>
+          <div class="price-row">${isSale?`<span class="price price-sale">${LUXE.formatPrice(p.sale_price)}</span><span class="price price-original">${LUXE.formatPrice(p.price)}</span>`:`<span class="price">${LUXE.formatPrice(p.price)}</span>`}</div>
+        </div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.quick-add').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const prod=LUXE.getById(btn.dataset.id);LUXE.addToCart(btn.dataset.id,prod.sizes?.[0]||'One Size',prod.colors?.[0]||'Default');showToast(prod.name+' added to cart!','success');}));
+    grid.querySelectorAll('.wish-btn').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();const added=LUXE.toggleWishlist(btn.dataset.id);btn.classList.toggle('active',added);btn.textContent=added?'♥':'♡';showToast(added?'Added to wishlist':'Removed from wishlist');}));
+  }
+  renderProducts();
+});
+</script>
+</body></html>

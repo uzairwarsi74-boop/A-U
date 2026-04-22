@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Content — LUXE Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="adm-layout">
+  <div class="adm-sidebar" id="adm-sidebar">
+    <div class="adm-sidebar-logo"><span id="sidebar-brand">LUXE</span><span>Admin Panel</span></div>
+    <nav class="adm-nav">
+      <div class="adm-nav-section">Overview</div>
+      <a href="dashboard.html">◈ Dashboard</a><a href="orders.html">📦 Orders</a>
+      <div class="adm-nav-section">Catalog</div>
+      <a href="products.html">👗 Products</a><a href="cards.html">▤ Homepage Cards</a>
+      <div class="adm-nav-section">Store</div>
+      <a href="branding.html">✦ Branding</a><a href="design.html">🎨 Design</a>
+      <a href="content.html">✏ Content</a><a href="images.html">🖼 Images</a>
+      <a href="pages.html">📄 Pages</a><a href="payment.html">💳 Payment</a>
+      <div class="adm-nav-section">Customers</div>
+      <a href="newsletter.html">✉ Newsletter</a><a href="messages.html">💬 Messages</a>
+      <div class="adm-nav-section">Settings</div>
+      <a href="settings.html">⚙ Settings</a>
+    </nav>
+    <div class="adm-sidebar-footer"><a href="../index.html" target="_blank">🏬 View Store</a></div>
+  </div>
+  <div class="adm-main">
+    <div class="adm-topbar">
+      <div class="flex-gap"><button id="sidebar-toggle" style="font-size:1.2rem;color:#888">☰</button><h2 id="adm-page-title">Content & Text</h2></div>
+      <div class="adm-topbar-actions">
+        <button class="adm-btn adm-btn-success" id="save-all">Save All</button>
+        <button class="adm-logout-btn">Sign Out</button>
+      </div>
+    </div>
+    <div class="adm-content">
+
+      <!-- Hero Section -->
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>Hero Banner</h3></div>
+        <div class="adm-card-body">
+          <div class="adm-form-row full"><div class="adm-field"><label>Heading</label><input id="hero-heading" placeholder="New Collection 2025"></div></div>
+          <div class="adm-form-row full"><div class="adm-field"><label>Subheading</label><input id="hero-subheading" placeholder="Curated fashion..."></div></div>
+          <div class="adm-form-row">
+            <div class="adm-field"><label>Button Text</label><input id="hero-btn-text" placeholder="Shop Now"></div>
+            <div class="adm-field"><label>Button Link</label><input id="hero-btn-link" placeholder="pages/products.html"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>About Page</h3></div>
+        <div class="adm-card-body">
+          <div class="adm-form-row full"><div class="adm-field"><label>Section Heading</label><input id="about-heading" placeholder="Our Story"></div></div>
+          <div class="adm-form-row full"><div class="adm-field"><label>Content</label><textarea id="about-content" rows="5" placeholder="Tell your brand story..."></textarea></div></div>
+        </div>
+      </div>
+
+      <!-- Newsletter Popup -->
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>Newsletter Popup</h3></div>
+        <div class="adm-card-body">
+          <div class="adm-form-row">
+            <div class="adm-field"><label>Popup Heading</label><input id="nl-heading" placeholder="Join Our Circle"></div>
+            <div class="adm-field"><label>Popup Subtext</label><input id="nl-subtext" placeholder="Get exclusive access..."></div>
+          </div>
+          <div class="adm-form-row">
+            <div class="adm-field"><label>Delay (seconds before popup shows)</label><input id="nl-delay" type="number" min="0" max="60" placeholder="4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy pages -->
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>Policy Pages</h3><span style="font-size:.8rem;color:#aaa">Manage FAQ, Shipping, Returns, Privacy, Terms</span></div>
+        <div class="adm-card-body">
+          <div class="adm-tabs">
+            <div class="adm-tab active" data-tab="faq">FAQ</div>
+            <div class="adm-tab" data-tab="shipping">Shipping</div>
+            <div class="adm-tab" data-tab="returns">Returns</div>
+            <div class="adm-tab" data-tab="privacy">Privacy</div>
+            <div class="adm-tab" data-tab="terms">Terms</div>
+          </div>
+          <div id="policy-panels"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="adm-toast"></div>
+<script src="../js/store.js"></script>
+<script src="js/admin.js"></script>
+<script>
+const POLICY_PAGES = ['faq','shipping','returns','privacy','terms'];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await initAdminPage('Content & Text');
+  if (!ok) return;
+  const cfg = LUXE.getConfig();
+
+  // Populate
+  if (cfg.hero) {
+    document.getElementById('hero-heading').value    = cfg.hero.heading||'';
+    document.getElementById('hero-subheading').value = cfg.hero.subheading||'';
+    document.getElementById('hero-btn-text').value   = cfg.hero.button_text||'';
+    document.getElementById('hero-btn-link').value   = cfg.hero.button_link||'';
+  }
+  if (cfg.about) {
+    document.getElementById('about-heading').value  = cfg.about.heading||'';
+    document.getElementById('about-content').value  = cfg.about.content||'';
+  }
+  if (cfg.newsletter_popup) {
+    document.getElementById('nl-heading').value = cfg.newsletter_popup.heading||'';
+    document.getElementById('nl-subtext').value = cfg.newsletter_popup.subtext||'';
+    document.getElementById('nl-delay').value   = cfg.newsletter_popup.delay_seconds||4;
+  }
+
+  // Policy pages
+  const panels = document.getElementById('policy-panels');
+  panels.innerHTML = POLICY_PAGES.map(p => {
+    const stored = JSON.parse(localStorage.getItem('luxe_page_'+p)||'{}');
+    return `<div class="adm-tab-panel ${p==='faq'?'active':''}" id="panel-${p}">
+      <div class="adm-form-row full" style="margin-top:16px"><div class="adm-field"><label>Page Heading</label><input id="pp-heading-${p}" value="${stored.heading||p.charAt(0).toUpperCase()+p.slice(1)}" placeholder="${p}"></div></div>
+      <div class="adm-form-row full"><div class="adm-field"><label>Page Content (HTML supported)</label><textarea id="pp-content-${p}" rows="8" placeholder="Enter page content...">${stored.content||''}</textarea></div></div>
+    </div>`;
+  }).join('');
+
+  // Tabs
+  document.querySelectorAll('.adm-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.adm-tab-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-'+tab.dataset.tab)?.classList.add('active');
+    });
+  });
+
+  document.getElementById('save-all').addEventListener('click', save);
+});
+
+function save() {
+  const cfg = LUXE.getConfig();
+  cfg.hero = {
+    ...cfg.hero,
+    heading:     document.getElementById('hero-heading').value.trim(),
+    subheading:  document.getElementById('hero-subheading').value.trim(),
+    button_text: document.getElementById('hero-btn-text').value.trim(),
+    button_link: document.getElementById('hero-btn-link').value.trim()
+  };
+  cfg.about = {
+    ...cfg.about,
+    heading: document.getElementById('about-heading').value.trim(),
+    content: document.getElementById('about-content').value.trim()
+  };
+  if (!cfg.newsletter_popup) cfg.newsletter_popup = {};
+  cfg.newsletter_popup.heading       = document.getElementById('nl-heading').value.trim();
+  cfg.newsletter_popup.subtext       = document.getElementById('nl-subtext').value.trim();
+  cfg.newsletter_popup.delay_seconds = parseInt(document.getElementById('nl-delay').value)||4;
+  LUXE.setConfig(cfg);
+
+  // Policy pages
+  POLICY_PAGES.forEach(p => {
+    const data = {
+      heading: document.getElementById('pp-heading-'+p)?.value||'',
+      content: document.getElementById('pp-content-'+p)?.value||''
+    };
+    localStorage.setItem('luxe_page_'+p, JSON.stringify(data));
+  });
+
+  adminToast('Content saved!','success');
+}
+</script>
+</body></html>

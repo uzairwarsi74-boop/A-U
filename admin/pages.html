@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Pages — LUXE Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="adm-layout">
+  <div class="adm-sidebar" id="adm-sidebar">
+    <div class="adm-sidebar-logo"><span id="sidebar-brand">LUXE</span><span>Admin Panel</span></div>
+    <nav class="adm-nav">
+      <div class="adm-nav-section">Overview</div>
+      <a href="dashboard.html">◈ Dashboard</a><a href="orders.html">📦 Orders</a>
+      <div class="adm-nav-section">Catalog</div>
+      <a href="products.html">👗 Products</a><a href="cards.html">▤ Homepage Cards</a>
+      <div class="adm-nav-section">Store</div>
+      <a href="branding.html">✦ Branding</a><a href="design.html">🎨 Design</a>
+      <a href="content.html">✏ Content</a><a href="images.html">🖼 Images</a>
+      <a href="pages.html">📄 Pages</a><a href="payment.html">💳 Payment</a>
+      <div class="adm-nav-section">Customers</div>
+      <a href="newsletter.html">✉ Newsletter</a><a href="messages.html">💬 Messages</a>
+      <div class="adm-nav-section">Settings</div>
+      <a href="settings.html">⚙ Settings</a>
+    </nav>
+    <div class="adm-sidebar-footer"><a href="../index.html" target="_blank">🏬 View Store</a></div>
+  </div>
+  <div class="adm-main">
+    <div class="adm-topbar">
+      <div class="flex-gap"><button id="sidebar-toggle" style="font-size:1.2rem;color:#888">☰</button><h2 id="adm-page-title">Pages</h2></div>
+      <div class="adm-topbar-actions">
+        <button class="adm-btn adm-btn-success" id="save-pages">Save Changes</button>
+        <button class="adm-logout-btn">Sign Out</button>
+      </div>
+    </div>
+    <div class="adm-content">
+      <div class="adm-card">
+        <div class="adm-card-header">
+          <h3>Navigation Pages</h3>
+          <span style="font-size:.8rem;color:#aaa">Control which pages appear in the navigation menu</span>
+        </div>
+        <div class="adm-card-body">
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Page</th><th>Menu Label</th><th>Order</th><th>Visible</th></tr></thead>
+              <tbody id="pages-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="adm-card">
+        <div class="adm-card-header"><h3>Admin Login URL</h3></div>
+        <div class="adm-card-body">
+          <p style="font-size:.88rem;color:#666;margin-bottom:12px">Your current admin login URL is: <strong>admin-login.html</strong></p>
+          <p style="font-size:.82rem;color:#aaa">To change the admin login URL for extra security, rename the <code>admin-login.html</code> file and update the links in <code>index.html</code> and all page footers.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="adm-toast"></div>
+<script src="../js/store.js"></script>
+<script src="js/admin.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const ok = await initAdminPage('Pages');
+  if (!ok) return;
+  renderPages();
+  document.getElementById('save-pages').addEventListener('click', savePages);
+});
+
+function renderPages() {
+  const cfg   = LUXE.getConfig();
+  const pages = cfg.pages||{};
+  const tbody = document.getElementById('pages-table');
+  tbody.innerHTML = Object.entries(pages).map(([key, val]) => `
+    <tr>
+      <td style="font-weight:500;text-transform:capitalize">${key}</td>
+      <td><input type="text" data-key="${key}" class="page-label" value="${val.label||key}" style="padding:6px 10px;border:1px solid var(--adm-border);border-radius:4px;font-size:.86rem;width:160px"></td>
+      <td><input type="number" data-key="${key}" class="page-order" value="${val.order||1}" style="padding:6px 10px;border:1px solid var(--adm-border);border-radius:4px;font-size:.86rem;width:70px" min="1" max="20"></td>
+      <td>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" data-key="${key}" class="page-visible" ${val.visible!==false?'checked':''} style="width:16px;height:16px;accent-color:#1a1a1a">
+          <span style="font-size:.84rem">${val.visible!==false?'Visible':'Hidden'}</span>
+        </label>
+      </td>
+    </tr>`).join('');
+
+  // Update visible label on change
+  document.querySelectorAll('.page-visible').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.nextElementSibling.textContent = cb.checked ? 'Visible' : 'Hidden';
+    });
+  });
+}
+
+function savePages() {
+  const cfg = LUXE.getConfig();
+  if (!cfg.pages) cfg.pages = {};
+  document.querySelectorAll('.page-label').forEach(input => {
+    const key = input.dataset.key;
+    if (!cfg.pages[key]) cfg.pages[key] = {};
+    cfg.pages[key].label = input.value.trim();
+  });
+  document.querySelectorAll('.page-order').forEach(input => {
+    const key = input.dataset.key;
+    if (!cfg.pages[key]) cfg.pages[key] = {};
+    cfg.pages[key].order = parseInt(input.value)||1;
+  });
+  document.querySelectorAll('.page-visible').forEach(cb => {
+    const key = cb.dataset.key;
+    if (!cfg.pages[key]) cfg.pages[key] = {};
+    cfg.pages[key].visible = cb.checked;
+  });
+  LUXE.setConfig(cfg);
+  adminToast('Page settings saved! Reload the store to see updated navigation.','success');
+}
+</script>
+</body></html>
